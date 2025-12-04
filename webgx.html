@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 1. TIÊU ĐỀ TRANG WEB (TỐI ƯU CHO SEO) -->
+    <title>Giáo Xứ Thánh Giuse Thợ - Lịch Lễ, Giới Thiệu & Liên Hệ</title> 
+    <!-- META DESCRIPTION: Cực kỳ quan trọng để Google hiểu nội dung -->
+    <meta name="description" content="Trang chủ chính thức của Giáo Xứ Thánh Giuse Thợ. Xem lịch lễ hàng tuần, thông tin giới thiệu và liên hệ.">
+    <!-- Tải Tailwind CSS để tạo kiểu nhanh chóng và đẹp mắt -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- CẤU HÌNH FONT: TIMES NEW ROMAN VÀ CSS TÙY CHỈNH -->
+    <style>
+        /* Đặt font Times New Roman cho toàn bộ trang (sử dụng fallback serif) */
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #f3f4f6; /* Màu nền xám nhẹ */
+        }
+        
+        /* Style tùy chỉnh cho bảng Lịch Lễ (DESKTOP) */
+        .schedule-table th, .schedule-table td {
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #d1d5db; /* Thêm border nhẹ cho bảng */
+        }
+        .schedule-table th {
+            background-color: #1f2937; /* Màu xám đậm (gần đen) */
+            color: white;
+            font-weight: 600;
+        }
+        .schedule-table tr:nth-child(even) {
+            background-color: #e5e7eb; /* Màu xám nhạt xen kẽ */
+        }
+        
+        /* --- TỐI ƯU HÓA MOBILE (SCHEDULE TABLE STACKING) --- */
+        @media (max-width: 767px) { /* Cho màn hình nhỏ hơn md */
+            .schedule-table {
+                border: none; /* Xóa border tổng thể */
+                border-spacing: 0 1rem; /* Tăng khoảng cách giữa các hàng */
+            }
+            .schedule-table thead {
+                display: none; /* Ẩn tiêu đề bảng */
+            }
+
+            .schedule-table tr {
+                display: block; /* Mỗi hàng là một "thẻ" */
+                margin-bottom: 1rem;
+                border: 1px solid #d1d5db;
+                border-radius: 0.75rem; /* Bo góc */
+                overflow: hidden;
+            }
+            
+            .schedule-table tr:nth-child(even) {
+                background-color: #f9fafb; 
+            }
+
+            .schedule-table td {
+                display: block; /* Mỗi ô dữ liệu là một "hàng" mới */
+                text-align: right !important; 
+                border-bottom: 1px solid #d1d5db;
+                position: relative;
+                padding-left: 50% !important; /* Chỗ cho label */
+                font-size: 1rem; 
+            }
+
+            .schedule-table td::before {
+                /* Thêm nhãn (Label) cho dữ liệu */
+                content: attr(data-label);
+                position: absolute;
+                left: 1rem;
+                width: 45%;
+                white-space: nowrap;
+                text-align: left; 
+                font-weight: 600; 
+                color: #1f2937;
+            }
+            
+            /* Dòng đầu tiên (Ngày) */
+            .schedule-table tr td:first-child {
+                text-align: center !important;
+                background-color: #1f2937; 
+                color: white;
+                font-weight: 700;
+                padding-left: 1rem !important; 
+            }
+            .schedule-table tr td:first-child::before {
+                content: none; /* Ẩn label cho dòng đầu tiên */
+            }
+        }
+
+        /* --- CÁC HIỆU ỨNG CHUNG VÀ ANIMATION --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translate3d(0, 40px, 0); }
+            to { opacity: 1; transform: translate3d(0, 0, 0); }
+        }
+        .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0; 
+        }
+        
+        @keyframes subtlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.01); } 
+        }
+
+        .animate-subtlePulse {
+            animation: subtlePulse 4s ease-in-out infinite;
+        }
+
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px) scale(1.005);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* --- STYLE CHO PHẦN LỊCH SỬ VÀ BANNER --- */
+        .history-text { font-size: 1.125rem; line-height: 1.625; color: #4b5563; margin-bottom: 0; }
+        .history-limited { max-height: 12.5rem; overflow: hidden; }
+        .history-fade-overlay { background: linear-gradient(to top, rgb(255, 255, 255, 1) 10%, rgb(255, 255, 255, 0) 100%); }
+
+        #home-banner { height: 550px; position: relative; overflow: hidden; }
+        #home-banner img { object-fit: cover; width: 100%; height: 100%; }
+
+        @media (max-width: 640px) {
+            #home-banner { height: 400px; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Thanh Điều Hướng (Navbar) -->
+    <header class="shadow-lg bg-gray-900 sticky top-0 z-50 transition duration-300 hover:shadow-xl border-b-4 border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            
+            <!-- Khu vực Tên Giáo Xứ -->
+            <div class="flex items-center space-x-2"> 
+                <img src="https://i.imgur.com/WdrgWVF.png" 
+                     alt="Logo Giáo Xứ Thánh Giuse Thợ" 
+                     class="h-10 w-auto object-contain" 
+                     onerror="this.src='https://placehold.co/40x40/3c3c3c/ffffff?text=LOGO+LOI'">
+
+                <h1 class="text-2xl font-bold text-white">
+                    <a href="#home" class="text-white hover:text-gray-400 transition duration-300">Giáo Xứ Thánh Giuse Thợ</a>
+                </h1>
+            </div>
+
+            <nav class="hidden md:flex space-x-8">
+                <a href="#home" class="text-gray-300 hover:text-white transition duration-300 font-medium">Trang Chủ</a>
+                <a href="#about" class="text-gray-300 hover:text-white transition duration-300 font-medium">Giới Thiệu</a>
+                <a href="#schedule" class="text-gray-300 hover:text-white transition duration-300 font-medium">Lịch Lễ</a>
+                <!-- ĐÃ XÓA LINK HỎI ĐÁP --> 
+                <a href="#contact" class="text-gray-300 hover:text-white transition duration-300 font-medium">Liên Hệ</a>
+            </nav>
+            <!-- Nút Menu Hamburger cho di động -->
+            <button id="menu-button" class="md:hidden text-white hover:text-gray-400 focus:outline-none" onclick="openMobileMenu()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
+            </button>
+        </div>
+    </header>
+    
+    <!-- OFFCANVAS MENU CHO MOBILE (Sidebar trượt vào) -->
+    <div id="mobile-sidebar" class="fixed inset-0 z-[60] transform -translate-x-full transition-transform duration-300 md:hidden">
+        <!-- Backdrop: Click vào đây để đóng menu -->
+        <div id="sidebar-backdrop" class="absolute inset-0 bg-black opacity-0 transition-opacity duration-300" onclick="closeMobileMenu()"></div>
+        <!-- Menu Content: W-64, độ sâu z-index cao hơn backdrop -->
+        <div class="relative w-64 max-w-[80vw] h-full bg-gray-900 shadow-2xl p-6 flex flex-col space-y-4 z-10">
+            <!-- Nút Đóng Menu -->
+            <button onclick="closeMobileMenu()" class="absolute top-4 right-4 text-white hover:text-gray-400 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <!-- Logo/Title -->
+            <div class="text-white text-xl font-bold border-b border-gray-700 pb-4 mb-4">
+                Menu Giáo Xứ
+            </div>
+            <!-- Links (Sử dụng onclick để đóng menu khi người dùng chọn) -->
+            <a href="#home" class="block py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-150 text-lg" onclick="closeMobileMenu()">Trang Chủ</a>
+            <a href="#about" class="block py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-150 text-lg" onclick="closeMobileMenu()">Giới Thiệu</a>
+            <a href="#schedule" class="block py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-150 text-lg" onclick="closeMobileMenu()">Lịch Lễ</a>
+            <!-- ĐÃ XÓA LINK HỎI ĐÁP -->
+            <a href="#contact" class="block py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-150 text-lg" onclick="closeMobileMenu()">Liên Hệ</a>
+        </div>
+    </div>
+    
+    <!-- Phần 1: Giới Thiệu Chính (Hero Section) -->
+    <section id="home" class="bg-white shadow-xl border-b-4 border-gray-900 animate-fadeInUp" style="animation-delay: 0.1s;">
+        <!-- Container MỚI: Đặt ảnh nền và text ghi đè lên -->
+        <div id="home-banner" class="w-full mx-auto relative">
+            <!-- Ảnh nền (Bị cắt vì object-fit: cover) -->
+            <img src="https://sf-static.upanhlaylink.com/img/image_20251203aca12187f92c2942e910ce4bbffc21fe.jpg" 
+                    alt="Hình ảnh Nhà Thờ" 
+                    class="w-full shadow-2xl transition duration-300 hover:opacity-95"
+                    onerror="this.src='https://placehold.co/1200x550/3c3c3c/ffffff?text=ANH+NHA+THO+LOI+HAY+KHONG+TAI+TRUC+TIEP';">
+            
+            <!-- VĂN BẢN GHI ĐÈ (Text Overlay) - Nằm tuyệt đối ở giữa -->
+            <div class="absolute inset-0 flex flex-col justify-center items-center p-4">
+                <!-- Khung Trong Suốt (overlay) cho chữ: ĐÃ DÙNG INLINE-BLOCK ĐỂ KHUNG SÁT CHỮ -->
+                <div class="bg-black bg-opacity-40 p-4 rounded-xl text-center shadow-2xl transition duration-300 hover:bg-opacity-50 inline-block">
+                    <p class="text-white text-2xl sm:text-3xl md:text-4xl font-extrabold italic leading-relaxed">
+                        "Thầy gọi anh em là bạn hữu, vì tất cả những gì Thầy nghe được nơi Cha Thầy, Thầy đã cho anh em biết”. 
+                    </p>
+                    <p class="mt-4 text-white text-lg sm:text-xl font-medium">
+                        (Ga 15,15)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTAINER: Giữ các phần khác căn giữa -->
+    <main class="max-w-7xl mx-auto">
+        <!-- Phần 2: Lịch Lễ (Schedule Section) - Áp dụng FadeInUp -->
+        <section id="schedule" class="py-16 px-4 sm:px-6 lg:px-8 animate-fadeInUp" style="animation-delay: 0.3s;">
+            <h3 class="text-3xl font-bold text-center text-gray-800 mb-10 border-b-2 border-gray-900 inline-block pb-1">Lịch Lễ Hàng Tuần</h3>
+            <!-- Áp dụng hiệu ứng nổi (hover-lift) khi rê chuột -->
+            <div class="bg-white p-6 md:p-10 rounded-xl shadow-2xl overflow-x-auto hover-lift">
+                <p class="text-center text-gray-600 mb-6 font-medium">
+                    Đến tham dự Thánh Lễ để cùng nhau Tôn Vinh Thiên Chúa.
+                </p>
+                <!-- TABLE: Đã thêm data-label cho mobile stacking -->
+                <table class="schedule-table min-w-full divide-y divide-gray-300 rounded-lg overflow-hidden border-collapse border border-gray-300">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Buổi Sáng</th>
+                            <th>Buổi Chiều/Tối</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-300">
+                        <!-- NGÀY THƯỜNG (Thứ Hai đến Thứ Bảy) -->
+                        <tr>
+                            <td class="font-semibold text-gray-700">Ngày Thường (Thứ Hai - Thứ Bảy)</td>
+                            <td class="font-mono text-lg text-gray-700" data-label="Buổi Sáng">5:30</td> 
+                            <td class="font-mono text-lg text-gray-700" data-label="Buổi Chiều/Tối">17:30</td>
+                        </tr>
+                        <!-- CHÚA NHẬT (LỄ CHÍNH) -->
+                        <tr class="font-extrabold text-gray-900 bg-yellow-100">
+                            <td>Chúa Nhật</td>
+                            <td class="font-mono text-xl" data-label="Buổi Sáng">5:30 & 7:30</td>
+                            <td class="font-mono text-xl" data-label="Buổi Chiều/Tối">17:30</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- BẮT ĐẦU: PHẦN GHI CHÚ ĐƯỢM THÊM VÀO -->
+                <div class="mt-8 pt-4 border-t border-gray-300">
+                    <h4 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                        <!-- Icon Bút viết/Ghi chú -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                        Ghi Chú
+                    </h4>
+                    <ul class="space-y-2 text-gray-700 list-disc list-inside bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        
+                        <!-- Đã THÊM GHI CHÚ QUAN TRỌNG VỀ THỨ NĂM VÀ THỨ BẢY SAU KHI ĐƠN GIẢN HÓA BẢNG -->
+                        
+                        <li>Các thánh lễ ngày thường (Thứ 2, THứ 3, Thứ 4,Thứ 6) tại Nhà Nguyện</li>
+                        <li>Các ngày thứ 5 thứ 7 lễ 17:30 tại Nhà Thờ </li>
+                        <li>Thánh lễ Chủ Nhật tại Nhà Thờ </li>
+                        <li>Giờ Lễ có thể thay đổi trong các dịp lễ trọng hoặc mùa đặc biệt (Mùa Chay, Mùa Vọng). Vui lòng theo dõi các thông báo trên bảng tin.</li>
+                    </ul>
+                </div>
+                <!-- KẾT THÚC: PHẦN GHI CHÚ ĐƯỢM THÊM VÀO -->
+            </div>
+        </section>
+
+        <!-- ĐÃ XÓA PHẦN MỚI: Hỏi Đáp Lời Chúa (Gemini API Integration) -->
+        
+        <!-- Phần 3: Giới Thiệu Chung (About Section) - Áp dụng FadeInUp -->
+        <section id="about" class="py-16 px-4 sm:px-6 lg:px-8 animate-fadeInUp" style="animation-delay: 0.5s;">
+            <h3 class="text-3xl font-bold text-center text-gray-800 mb-10 border-b-2 border-gray-900 inline-block pb-1">Về Giáo Xứ</h3>
+            <!-- Áp dụng hiệu ứng nổi (hover-lift) khi rê chuột -->
+            <div class="bg-white p-8 rounded-xl shadow-2xl hover-lift">
+                <!-- Giới Thiệu Lịch Sử -->
+                <h4 class="text-2xl font-semibold text-gray-800 mb-3 border-b pb-2">Lịch Sử Phát Triển</h4>
+                
+                <!-- START: LỊCH SỬ GIÁO XỨ - WRAPPER MỚI CHO TRUNCATION -->
+                <div id="history-wrapper" class="relative">
+                    <!-- ÁP DỤNG CÁC CLASS MỚI: history-text, history-limited -->
+                    <div id="history-content" class="history-text history-limited relative transition-all duration-1000"> 
+                        <!-- LONG TEXT HERE -->
+                        
+                        <!-- Đoạn văn được căn giữa theo yêu cầu của người dùng -->
+                        <p class="text-center italic font-medium text-gray-800 mb-4">
+                            “Tôi rất thương giáo xứ Thánh Giuse Thợ này: đã nhỏ bé và gặp nhiều khó khăn, lại còn bị giải toả, vất vả đủ điều. Nhưng rồi mọi sự cũng tươi sáng hơn khi chính quyền các cấp - đặc biệt là lãnh đạo thành phố, quận 9 và phường Phước Long A - đã tạo điều kiện thuận lợi cho công việc đền bù, giải toả và cấp giấy phép xây dựng ở đây.”
+                        </p>
+                        
+                        <!-- Đã bọc các đoạn văn đầu tiên trong thẻ <p> để căn tách khỏi đoạn Quote -->
+                        <p class="mb-3">Trên đây là tâm tình của Linh mục Tổng Đại diện TGP Sài Gòn - Inhaxiô Hồ Văn Xuân -  trong Thánh lễ đặt viên đá đầu tiên để xây dựng ngôi nhà thờ mới của Giáo xứ Thánh Giuse Thợ.</p>
+
+                        <p class="mb-6">Thánh lễ do Đức Cha Luy Nguyễn Anh Tuấn chủ sự vào lúc 9g ngày 3-12-2017 tại số 146/1 đường Nam Hòa, phường Phước Long A, Quận 9, Tp.Hồ Chí Minh.</p>
+
+
+                        <div class="font-bold text-gray-900 mb-2">1. Thời hoang sơ</div>
+                        <p class="mb-3">Trước năm 1960, nơi đây thuộc ấp Tây Hòa, xã Phước Long. Đất đai còn rất hoang sơ với rừng chồi và lũy tầm vông. Dân cư thưa thớt.</p>
+                        <p class="mb-3">Từ năm 1960, kinh tế bắt đầu phát triển. Khu vực cầu Rạch Chiếc đã mọc lên nhà máy xi măng Hà Tiên, nhà máy nhiệt điện Thủ Đức, nhà máy giấy Việt Hải, len Vĩnh Thịnh, hãng thầu RMK, kho tồn trữ Trung Ương. Khu vực xã Phước Long có nhà máy Vinatol, nhà máy tôn xi măng, dệt Phong Phú, Sicovina, trại heo Tưởng Lễ.</p>
+                        <p class="mb-6">Một số công nhân đã tạm cư nơi này để làm việc cho các hãng xưởng, trong đó có 9 gia đình Công giáo đến lập nghiệp.</p>
+
+                        <div class="font-bold text-gray-900 mb-2">2. Thuở ban đầu: 1970-1975</div>
+                        <p class="mb-3">Đến năm 1970, công nhân ngày càng gia tăng. Nhiều công nhân Công giáo không thể tham dự Thánh lễ vì nơi đây không có nhà thờ. Biết được tình hình này, linh mục Nicôla Huỳnh Văn Nghi - lúc đó là cha sở Tân Định - đã xây một nhà nguyện tại ấp Tây Hòa, gần đình Phú Thọ, mặt tiền hướng ra xa lộ.</p>
+                        <p class="mb-3">Ngày 15-8-1971, nhà nguyện được khánh thành và dâng kính cho Thánh Giuse Thợ, còn được gọi nôm na là Nhà thờ Xi măng Hà Tiên, trực thuộc họ đạo Tân Định.</p>
+                        <p class="mb-3">Mỗi chiều Chúa nhật, cha Huỳnh Văn Nghi đến đây dâng Thánh lễ. Sau khi ngài được tấn phong Giám mục Phụ tá, cha Giacôbê Huỳnh Văn Huệ về phụ trách giáo xứ.</p>
+                        <p class="mb-3">Đặc biệt, hằng tuần vào lúc 6 giờ sáng thứ Tư và thứ Sáu, nhà nguyện này được đón Đức Tổng Phaolô Nguyễn Văn Bình hoặc Đức cha Phụ tá Phanxicô Xaviê Trần Thanh Khâm đến dâng Thánh lễ.</p>
+                        <p class="mb-3">Từ năm 1974, Lm Giacôbê Nguyễn Văn Phượng lo việc mục vụ cho giáo xứ.</p>
+                        <p class="mb-6">Từ 1978 – 1988, Lm Stanislao Lê Vĩnh Thủy, Dòng Chúa Cứu Thế về coi sóc mục vù tại giáo xứ.</p>
+
+                        <div class="font-bold text-gray-900 mb-2">3. Vắng bóng chủ chăn: 1988 - 1995</div>
+                        <p class="mb-3">Từ năm 1988 đến năm 1995, giáo xứ vắng bóng chủ chăn.</p>
+                        <p class="mb-3">Cha Luca Nguyễn Thanh Bình đã ký ủy nhiệm thư trao cho Ban Hành giáo cai quản tài sản và bất động sản của giáo xứ cho đến khi có linh mục chánh xứ mới. Ban Hành giáo khi ấy gồm:</p>
+                        <ul class="list-disc list-inside ml-4 mb-6 space-y-1">
+                            <li>Ông Vinh Sơn Liêm Phạm Thế Bảo – Trưởng ban,</li>
+                            <li>Ông Inhaxiô Trần Văn Thịnh – Phó Ban</li>
+                            <li>Ông Giuse Trần Văn Chiến – Thư Ký.</li>
+                        </ul>
+                        <p class="mb-6">Trong 8 năm này, Chúa nhật hằng tuần có Lm hạt trưởng Luca Nguyễn Thanh Bình, Lm Cosma Hoàng Văn Đạt SJ. (nay là Giám mục Bắc Ninh), Lm Giuse Phạm Văn Đẩu (chánh xứ Tân Đức) và các linh mục trong giáo hạt thay nhau đến dâng lễ cho giáo dân. Việc hát lễ và dạy Giáo lý cho các em thiếu nhi thì do các chị Tu hội Bác Ái Cao Thái và các nữ tu Hội dòng Mến Thánh Giá Thủ Thiêm phụ trách.</p>
+
+                        <div class="font-bold text-gray-900 mb-2">4. Giai đoạn hồi sinh</div>
+                        <p class="mb-3">Đầu tháng 8-1995, Lm Gioan Baotixita Trần Đức Huyên - cựu Giáo sư Đại Chủng viện Thánh Giuse - về nhậm chức chánh xứ Thánh Giuse Thợ.</p>
+                        <p class="mb-3">Ngài bắt đầu xây dựng Nhà thờ mới trên nền nhà nguyện do Đức cha Nicôla sáng lập. Thánh lễ đặt viên đá đầu tiên do Đức Tổng Giám mục (TGM) Gioan Baotixita Phạm Minh Mẫn chủ sự, diễn ra vào ngày 11-4-2002. Công trình xây dựng nhà thờ hoàn tất với lễ khánh thành ngày 9-1-2003, cũng do Đức TGM Gioan Baotixita chủ sự.</p>
+                        <p class="mb-3">Trong 7 năm phục vụ, cha Gioan Baotixita luôn nỗ lực phát triển đời sống đức tin của cộng đoàn. Ngài nhờ các thầy của Đại Chủng viện Thánh Giuse Sài gòn và các nữ tu Dòng Thánh Phaolô thành Chartres về dạy giáo lý. Các nữ tu Dòng Thánh Phaolô vẫn tiếp tục dạy giáo lý cho đến ngày nay.</p>
+                        <p class="mb-3">Hằng ngày, giáo xứ có Thánh lễ lúc 5 giờ chiều. Trong tháng Ba và tháng Năm, có rước tượng Thánh Giuse và Đức Mẹ đến từng gia đình trong giáo xứ để cộng đoàn tập trung đọc kinh cầu nguyện.</p>
+                        <p class="mb-3">Lm Gioan Baotixita Trần Đức Huyên qua đời năm 2003. Giáo xứ lại vắng bóng mục tử cho đến năm 2005. Trong thời gian này, cha Hạt trưởng Thủ Thiêm - Gioan Baotixita Phạm Văn Hợp - quản nhiệm giáo xứ. Chúa nhật và các buổi chiều ngày thường, có các linh mục dòng Tên và dòng Phanxicô đến dâng lễ. Các lớp Giáo lý vẫn hoạt động. Tuy nhiên, sinh hoạt mục vụ gặp rất nhiều khó khăn khi vắng chủ chăn thường trực. </p>
+                        <p class="mb-6">Ngày 28-5-2005, Đức Hồng y Gioan Baotixita Phạm Minh Mẫn (ĐHY) đã bổ nhiệm Linh mục Luy Gonzaga Tô Minh Quang về làm chánh xứ giáo xứ Thánh Giuse Thợ trong 6 năm. Với nỗ lực mục vụ, cha Luy Gonzaga luôn nhắc nhở mọi người nhớ “mình là con Chúa, sống phục vụ, yêu thương” và “mỗi người giống như một viên sỏi, nhờ gặp gỡ tiếp xúc mỗi ngày mà được được nên tròn trịa nhiều hơn”.</p>
+
+                        <div class="font-bold text-gray-900 mb-2">5. Cha sở đương nhiệm</div>
+                        <p class="mb-3">Ngày 3-12-2011, ĐHY đã bổ nhiệm linh mục Đaminh Hoàng Trọng Hợp về làm chánh xứ giáo xứ Thánh Giuse Thợ.</p>
+                        <p class="mb-3">Với tấm lòng của người mục tử, cha đã mục vụ giáo xứ cách tận tâm, dành riêng Thánh lễ 9 giờ sáng Chúa nhật cho thiếu nhi, mời các thầy Dòng Mẹ Chúa Cứu Chuộc cộng tác với các nữ tu Dòng Thánh Phaolô và các em Huynh trưởng, hướng dẫn đời sống đức tin cho các em thiếu nhi.</p>
+                        <p class="mb-3">Ngày 3-11-2012, cha đã thành lập đoàn Thiếu Nhi Thánh Thể xứ đoàn Martino để giúp các em thiếu nhi sống Bí tích Thánh Thể, siêng năng cầu nguyện và làm việc tông đồ.</p>
+                        <p class="mb-3">Ngài cũng đặc cách những người đã tốt nghiệp ‘khóa đào tạo Hội đồng Mục vụ Giáo xứ’ bao gồm: Matthêu Nguyễn Văn Phượng, Anê Lê Thị Thành và Tôma Trần Văn Thiện chính thức làm việc tại giáo họ.</p>
+
+                        <div class="font-bold text-gray-900 mb-2">6. Giải tỏa và di dời nhà thờ</div>
+                        <p class="mb-3">Cùng với sự phát triển của đất nước, Thành phố Hồ Chí Minh (TP.HCM) đã thực hiện dự án mở rộng xa lộ Hà Nội trên địa bàn quận 9. Nhà thờ Thánh Giuse Thợ cũng nằm trong dự án này. Quá trình di dời Nhà thờ đã từng bước hoàn thành với những hồ sơ cần thiết:</p>
+                        <ul class="list-decimal list-inside ml-4 mb-6 space-y-1">
+                            <li>Ngày 22-3-2016, Ủy ban Nhân dân TP.HCM ra quyết định: giao một mảnh đất tại phường Phước Long A, quận 9 cho giáo xứ Thánh Giuse Thợ.</li>
+                            <li>Ngày 06-7-2016, Sở Tài nguyên và Môi trường cấp giấy chứng nhận quyền sử dụng đất cho giáo xứ Thánh Giuse Thợ, tại số 146/1, đường Nam Hòa, phường Phước Long A, Quận 9, TP.HCM.</li>
+                            <li>Ngày 1-9-2016, Đức TGM Phaolô Bùi Văn Đọc chấp thuận cho phép giáo xứ Thánh Giuse Thợ xây dựng lại ngôi nhà thờ mới tại số 146/1, đường Nam Hòa, phường Phước Long A, Quận 9, TP.HCM.</li>
+                            <li>Ngày 13-12-2016, Ban Tôn Giáo và Sở Nội Vụ có công văn số 1824/BTG xác định: việc xin xây dựng mới nhà thờ Thánh Giuse Thợ có nhu cầu về mặt tôn giáo, không có gì trở ngại.</li>
+                            <li>Ngày 22-9-2017, Sở Xây Dựng cấp giấy phép xây dựng cho giáo xứ Thánh Giuse Thợ tại địa chỉ 146/1, đường Nam Hòa, phường Phước Long A, Quận 9, Tp. Hồ Chí Minh.</li>
+                            <li>Ngày 3-12-2017, được sự chấp thuận của Đức TGM Phaolô và UBND Quận 9, giáo xứ đã tổ chức Thánh lễ đặt viên đá đầu tiên - khởi công xây dựng nhà thờ giáo xứ Thánh Giuse Thợ trên nền đất mới.</li>
+                        </ul>
+                        <p class="mb-3">Sau lời nguyện hiệp lễ, thay mặt dân Chúa giáo xứ Thánh Giuse Thợ, linh mục chánh xứ Đaminh Hoàng Trọng Hợp đã ngỏ lời cảm ơn mọi người: “Hơn một ngàn con tim sống trên mảnh đất này sẽ khắc ghi tấm bia lòng để tri ân Tình Chúa - Tình Người. Xin Thiên Chúa là Cha Nhân Từ chúc phúc lành cho những người đã làm phúc cho chúng con và ước mong công trình sẽ hoàn thành trong năm 2020, nhân dịp kỷ niệm 50 năm thành lập giáo xứ.”</p>
+                        <p class="text-right text-sm italic text-gray-500">Sơn Nữ SPC - NSTM 2.2018 (TGPSG)</p>
+                    </div>
+                    
+                    <!-- GRADIENT OVERLAY: Tạo hiệu ứng làm mờ dần -->
+                    <div id="fade-overlay" class="absolute bottom-0 left-0 right-0 h-16 history-fade-overlay transition-opacity duration-1000 pointer-events-none"></div>
+                    
+                    <!-- NÚT XEM THÊM: Đặt ở vị trí tuyệt đối để nổi trên lớp mờ -->
+                    <button id="read-more-btn" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 mt-4 bg-gray-900 text-white font-bold py-2 px-6 rounded-full hover:bg-gray-700 transition duration-300 shadow-xl read-more-button border-4 border-white">
+                        Xem thêm▾
+                    </button>
+                </div>
+                <!-- END: LỊCH SỬ GIÁO XỨ -->
+                
+                <!-- Thông tin Cha Xứ -->
+                <!-- Điều chỉnh margin-top để không bị chồng lên nút "Xem thêm" -->
+                <div id="priest-info" class="mt-20 p-4 border-l-4 border-gray-900 bg-gray-100 text-gray-700 rounded-lg shadow-md hover-lift">
+                    <p class="font-semibold text-xl mb-1">Cha Xứ: Lm. Giuse Trương Vĩnh Phúc</p>
+                    <p class="text-sm italic">Liên hệ: <span class="text-red-600 font-bold">để trống</span></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phần 4: Liên Hệ và Vị Trí (Contact Section) - Áp dụng FadeInUp -->
+        <section id="contact" class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-800 text-white rounded-t-3xl mt-8 animate-fadeInUp" style="animation-delay: 0.7s;">
+            <h3 class="text-3xl font-bold text-center mb-10 border-b-2 border-white inline-block pb-1">Địa Chỉ và Liên Hệ</h3>
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div>
+                    <h4 class="text-2xl font-semibold mb-4">Thông Tin Liên Hệ</h4>
+                    <p class="mb-3 flex items-start">
+                        <!-- Icon Location -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0 mr-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.727A8 8 0 0110.5 20.849a8 8 0 01-7.157-4.122A8 8 0 0110.5 3.151a8 8 0 017.157 13.576zM15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        <span class="font-medium">146/1 Đ. Nam Hoà, Phước Long A, Thủ Đức, Thành phố Hồ CMinh.</span>
+                    </p>
+                    <p class="mb-3 flex items-center">
+                        <!-- Icon Phone -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.5a1.5 1.5 0 011.5 1.5v1.5a1 1 0 001 1h1.5a1.5 1.5 0 011.5 1.5v1.5a1 1 0 001 1h1.5a1.5 1.5 0 011.5 1.5v3.5a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
+                        <span class="font-medium">Văn Phòng Giáo Xứ: để trống </span>
+                    </p>
+                    <p class="mb-3 flex items-center">
+                        <!-- Icon Email -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-1 10a2 2 0 01-2 2H6a2 2 0 01-2-2V9a2 2 0 012-2h12a2 2 0 012 2v9z" /></svg>
+                        <span class="font-medium">Email: để trống </span>
+                    </p>
+                </div>
+                <!-- Khung Bản Đồ (Iframe Google Maps thực tế đã được dán) -->
+                <div>
+                    <h4 class="text-2xl font-semibold mb-4">Vị Trí Trên Bản Đồ</h4>
+                    <!-- Thêm hiệu ứng hover-lift nhẹ -->
+                    <div class="w-full bg-gray-900 rounded-lg shadow-inner h-64 hover-lift">
+                        <!-- Dán Iframe thực tế vào đây, đảm bảo nó chiếm toàn bộ không gian container -->
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.769929869536!2d106.76237817435171!3d10.828910858224823!2m3!1f0!2f0!0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752651ede0b7b5%3A0x699cd96a378359b1!2zTmjDoCB0aOG7n Schroeder Gac-Lich Xá Ii Xoá Ii Thw7c!5e0!3m2!1svi!2s!4v1764729522245!5m2!1svi!2s" 
+                                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade" class="rounded-lg"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer ĐÃ CHỈNH SỬA - Căn chỉnh Trái/Phải và thêm Facebook Icon -->
+        <footer class="bg-gray-900 text-white py-6">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                
+                <!-- Nội dung bên TRÁI (Bản quyền và Tagline) -->
+                <div>
+                    <p class="text-sm sm:text-base">&copy; 2025 Giáo Xứ Thánh Giuse Thợ.</p>
+                    <p class="text-xs mt-1 text-gray-400">Thiết kế theo phong cách trang web Giáo Xứ Công Giáo.</p>
+                </div>
+                
+                <!-- Nội dung bên PHẢI (Social Links) -->
+                <div class="flex items-center space-x-4">
+                    <a href="https://www.facebook.com/DoanThieuNhiThanhMartino" target="_blank" rel="noopener noreferrer" 
+                       class="text-white hover:text-blue-500 transition duration-300 transform hover:scale-110"
+                       title="Truy cập Trang Facebook của Giáo Xứ">
+                        <!-- Icon Facebook (SVG) - Màu trắng, kích thước lớn hơn 1 chút -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm3.6 8.4h-1.6V7c0-.4.4-.8.8-.8h.8V4.8h-1.6c-1.8 0-2.6 1.1-2.6 2.6v1h-1.6v2.4h1.6v6.4h2.4v-6.4h1.6l.4-2.4z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </footer>
+
+    <!-- JavaScript để xử lý Menu Di Động VÀ TÍNH NĂNG ĐỌC THÊM LỊCH SỬ -->
+    <script>
+        // --- XỬ LÝ MENU DI ĐỘNG (OFFCANVAS) ---
+        const sidebar = document.getElementById('mobile-sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const body = document.body; // Cần truy cập body để ngăn cuộn
+
+        function openMobileMenu() {
+            sidebar.classList.remove('-translate-x-full');
+            backdrop.classList.add('opacity-50');
+            backdrop.classList.remove('opacity-0');
+            body.style.overflow = 'hidden'; // Ngăn cuộn nền
+        }
+
+        function closeMobileMenu() {
+            sidebar.classList.add('-translate-x-full');
+            backdrop.classList.add('opacity-0');
+            backdrop.classList.remove('opacity-50');
+            // Thêm một độ trễ để đảm bảo transition hoàn tất trước khi cho phép cuộn lại
+            setTimeout(() => {
+                body.style.overflow = ''; 
+            }, 300); 
+        }
+
+        // --- XỬ LÝ XEM THÊM LỊCH SỬ ---
+        const readMoreBtn = document.getElementById('read-more-btn');
+        const historyContent = document.getElementById('history-content');
+        const fadeOverlay = document.getElementById('fade-overlay');
+        const priestInfo = document.getElementById('priest-info');
+        let isExpanded = false;
+
+        readMoreBtn.addEventListener('click', () => {
+            if (isExpanded) {
+                // Thu gọn
+                historyContent.classList.add('history-limited');
+                fadeOverlay.classList.remove('opacity-0');
+                readMoreBtn.textContent = 'Xem thêm ▾';
+                priestInfo.classList.add('mt-20');
+                priestInfo.classList.remove('mt-8');
+            } else {
+                // Mở rộng
+                historyContent.classList.remove('history-limited');
+                fadeOverlay.classList.add('opacity-0');
+                readMoreBtn.textContent = 'Thu gọn  ▴';
+                priestInfo.classList.remove('mt-20');
+                priestInfo.classList.add('mt-8');
+            }
+            isExpanded = !isExpanded;
+        });
+
+    </script>
+</body>
+</html>
